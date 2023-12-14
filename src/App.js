@@ -1,25 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
 
-function App() {
+function GameRow( {game} ) {
+
+  const win = game.win ? "Win" : "Los"
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <tr>
+      <td>{game.hero_id}</td>
+      <td>{game.villain_id}</td>
+      <td>{win}</td>
+    </tr>
   );
 }
 
-export default App;
+function GamesTable( {games} ) {
+
+  const rows = [];
+
+  games.forEach((game) => {
+    rows.push(
+      <GameRow
+        game={game} />
+    );
+  });
+
+  return (
+    <div>
+      <h1>Games</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Hero ID</th>
+            <th>Villain ID</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
+  )
+}
+
+export default function App() {
+
+  const [games, setGames] = useState([])
+
+  useEffect(() => {
+    fetch("http://localhost:8000/games")
+    .then(response => response.json())
+    .then(games => setGames(games));
+  }, [])
+
+  return (
+    <GamesTable games={games}/>
+  )
+}
